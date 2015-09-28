@@ -15,6 +15,9 @@ function Character() {
   this.spells = [];
   this.klassMoves = [];
   // this.companions = []; //hirelings, animal companions, familiars, etc.??
+  //for temp stats:
+  this.hold = {};
+  this.forward = {};
 }
 Character.prototype = {
 
@@ -53,10 +56,29 @@ Character.prototype = {
   assignEquipment: function() {
     var equipment = {
       weapons: [],
+      ammo:[],
       armor:[],
-      gp:0,
-      other: []
+      coins:0,
+      other:[]
     };
     return equipment;
+  },
+
+  getWeapon: function() {
+    var options = this.equipment.weapons;
+    options.push(
+      {
+        type: EquipmentEnums.types.WEAPON,
+        name: "Other",
+        description: "???",
+        weight: 0,
+        tags: []
+      }
+    );
+    var choice = Game.getChoiceIndex(options);
+    return options[choice];
+  },
+  getAmmo: function(ammoType) {
+
   }
 }
