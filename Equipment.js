@@ -1,12 +1,15 @@
+//TODO some equipment (bandages, etc.) need associated moves
+
 var EquipmentEnums = {
   types:{
     WEAPON:1,
     AMMO:2,
     ARMOR:3,
-    OTHER:4
+    OTHER:4,
+    COINS:5,
   },
   ammoTypes:{
-    ARROWS:1
+    ARROWS:1,
   },
   weaponTags:{
     DMG:{
@@ -36,11 +39,26 @@ var EquipmentEnums = {
     THROWN:17,
     TOUCH:18,
     TWO_HANDED:19,
-    USES:20
   },
   armorTags:{
     CLUMSY:1,
-  }
+  },
+  generalTags:{
+    USES:{
+      1:1,
+      2:2,
+      3:3,
+      4:4,
+      5:5,
+      6:6,
+      7:7,
+    },
+    RATION:1,
+    SLOW:2,
+    DANGEROUS:3,
+    APPLIED:4,
+    TOUCH:5
+  },
 };
 
 var Equipment = {
@@ -53,7 +71,7 @@ var Equipment = {
       tags: [
         EquipmentEnums.weaponTags.NEAR,
       ],
-      type: EquipmentEnums.WEAPON,
+      type: EquipmentEnums.types.WEAPON,
       ammoType: EquipmentEnums.ammoTypes.ARROWS,
     },
     FINE_BOW:{
@@ -65,7 +83,7 @@ var Equipment = {
         EquipmentEnums.weaponTags.NEAR,
         EquipmentEnums.weaponTags.FAR,
       ],
-      type: EquipmentEnums.WEAPON,
+      type: EquipmentEnums.types.WEAPON,
       ammoType: EquipmentEnums.ammoTypes.ARROWS,
     },
     HUNTERS_BOW:{
@@ -77,7 +95,7 @@ var Equipment = {
         EquipmentEnums.weaponTags.NEAR,
         EquipmentEnums.weaponTags.FAR,
       ],
-      type: EquipmentEnums.WEAPON,
+      type: EquipmentEnums.types.WEAPON,
       ammoType: EquipmentEnums.ammoTypes.ARROWS,
     },
     CROSSBOW:{
@@ -90,7 +108,7 @@ var Equipment = {
         EquipmentEnums.weaponTags.RELOAD,
         EquipmentEnums.weaponTags.DMG[1],
       ],
-      type: EquipmentEnums.WEAPON,
+      type: EquipmentEnums.types.WEAPON,
       ammoType: EquipmentEnums.ammoTypes.ARROWS,
     },
     CLUB:{
@@ -101,7 +119,7 @@ var Equipment = {
       tags: [
         EquipmentEnums.weaponTags.CLOSE
       ],
-      type: EquipmentEnums.WEAPON,
+      type: EquipmentEnums.types.WEAPON,
     },
     SHILLELAGH:{
       name: "Shillelagh",
@@ -111,7 +129,7 @@ var Equipment = {
       tags: [
         EquipmentEnums.weaponTags.CLOSE
       ],
-      type: EquipmentEnums.WEAPON,
+      type: EquipmentEnums.types.WEAPON,
     },
     STAFF:{
       name: "Staff",
@@ -289,21 +307,21 @@ var Equipment = {
 
   ammo:{
     BUNDLE_OF_ARROWS:{
-      name: "Arrows",
+      name: "Bundle of Arrows",
       description: "Bundle of arrows",
       weight: 1,
       coins:1,
       ammo: 3,
-      type:EquipmentEnums.AMMO,
+      type:EquipmentEnums.types.AMMO,
       ammoType: EquipmentEnums.ammoTypes.ARROWS,
     },
     ELVEN_ARROWS:{
-      name: "Arrows",
+      name: "Elven Arrows",
       description: "Elven arrows",
       weight: 1,
       coins:20,
       ammo:4,
-      type:EquipmentEnums.AMMO,
+      type:EquipmentEnums.types.AMMO,
       ammoType: EquipmentEnums.ammoTypes.ARROWS,
     },
   },
@@ -315,7 +333,7 @@ var Equipment = {
       weight: 1,
       coins:10,
       armor: 1,
-      type: EquipmentEnums.ARMOR,
+      type: EquipmentEnums.types.ARMOR,
     },
     CHAINMAIL:{
       name: "Chainmail",
@@ -323,7 +341,7 @@ var Equipment = {
       weight: 1,
       coins:10,
       armor: 1,
-      type: EquipmentEnums.ARMOR,
+      type: EquipmentEnums.types.ARMOR,
     },
     SCALE_MAIL:{
       name: "Scale Mail",
@@ -331,7 +349,7 @@ var Equipment = {
       weight: 3,
       coins:50,
       armor: 2,
-      type: EquipmentEnums.ARMOR,
+      type: EquipmentEnums.types.ARMOR,
       tags:[
         EquipmentEnums.CLUMSY,
       ],
@@ -342,7 +360,7 @@ var Equipment = {
       weight: 4,
       coins:350,
       armor: 3,
-      type: EquipmentEnums.ARMOR,
+      type: EquipmentEnums.types.ARMOR,
       tags:[
         EquipmentEnums.CLUMSY,
       ],
@@ -353,7 +371,177 @@ var Equipment = {
       weight: 2,
       coins:15,
       armorBonus: 1,
-      type: EquipmentEnums.ARMOR,
+      type: EquipmentEnums.types.ARMOR,
     },
   },
+
+  gear:{
+    ADVENTURING_GEAR:{
+      name: "Adventuring Gear",
+      description: "A collection of useful mundane items",
+      weight:1,
+      coins:20,
+      tags:[
+        EquipmentEnums.generalTags.USES[5],
+      ],
+      type:EquipmentEnums.types.OTHER,
+    },
+    BANDAGES:{
+      name: "Bandages",
+      description: "heal 4 damage per use",
+      weight:0,
+      coins:5,
+      tags:[
+        EquipmentEnums.generalTags.SLOW,
+        EquipmentEnums.generalTags.USES[3],
+      ],
+      type:EquipmentEnums.types.OTHER,
+    },
+    POULTICES_HERBS:{
+      name: "Poultices and Herbs",
+      description: "heal 7 damage per use",
+      weight:1,
+      coins:10,
+      tags:[
+        EquipmentEnums.generalTags.SLOW,
+        EquipmentEnums.generalTags.USES[2],
+      ],
+      type:EquipmentEnums.types.OTHER,
+    },
+    HEALING_POTION:{
+      name: "Healing Potion",
+      description: "heal 10 damage and remove one debility",
+      weight:0,
+      coins:50,
+      tags:[],
+      type:EquipmentEnums.types.OTHER,
+    },
+    KEG_DWARVEN_STOUT:{
+      name: "Keg of Dwarven Stout",
+      description: "Share and take +1 to Carouse",
+      weight:4,
+      coins:10,
+      tags:[],
+      type:EquipmentEnums.types.OTHER,
+    },
+    BAG_OF_BOOKS:{
+      name: "Bag of Books",
+      description: "Consult a book to take +1 to Spout Lore",
+      weight:2,
+      coins:10,
+      tags:[
+        EquipmentEnums.generalTags.USES[5],
+      ],
+      type:EquipmentEnums.types.OTHER,
+    },
+    ANTITOXIN:{
+      name: "Antitoxin",
+      description: "Drink to cure one poison",
+      weight:0,
+      coins:10,
+      tags:[],
+      type:EquipmentEnums.types.OTHER,
+    },
+    DUNGEON_RATIONS:{
+      name: "Dungeon Rations",
+      description: "Dungeon rations",
+      weight: 1,
+      coins:3,
+      tags:[
+        EquipmentEnums.generalTags.RATION,
+        EquipmentEnums.generalTags.USES[5],
+      ],
+      type: EquipmentEnums.types.OTHER,
+    },
+    PERSONAL_FEAST:{
+      name: "Personal Feast",
+      description: "Ostentatious to say the least.",
+      weight:1,
+      coins:10,
+      tags:[
+        EquipmentEnums.generalTags.RATION,
+        EquipmentEnums.generalTags.USES[1],
+      ],
+      type:EquipmentEnums.types.OTHER,
+    },
+    DWARVEN_HARDTACK:{
+      name: "Dwarven Hardtack",
+      description: "Non-Dwarves look elsewhere.",
+      weight:1,
+      coins:3,
+      tags:[
+        EquipmentEnums.generalTags.RATION,
+        EquipmentEnums.generalTags.USES[7],
+      ],
+      type:EquipmentEnums.types.OTHER,
+    },
+    ELVEN_BREAD:{
+      name: "Elven Bread",
+      description: "A delicacy",
+      weight:1,
+      coins:10,
+      tags:[
+        EquipmentEnums.generalTags.RATION,
+        EquipmentEnums.generalTags.USES[7],
+      ],
+      type:EquipmentEnums.types.OTHER,
+    },
+    HALFLING_PIPELEAF:{
+      name: "Halfling Pipeleaf",
+      description: "Take +1 forward to parley if you share it (mark 2 uses).",
+      weight:0,
+      coins:5,
+      tags:[
+        EquipmentEnums.generalTags.USES[6],
+      ],
+      type:EquipmentEnums.types.OTHER,
+    },
+  },
+
+  poisons:{
+    OIL_OF_TAGIT:{
+      name: "Oil of Tagit",
+      description: "The target falls into a light sleep",
+      weight:0,
+      coins:15,
+      tags:[
+        EquipmentEnums.generalTags.APPLIED,
+        EquipmentEnums.generalTags.DANGEROUS,
+      ],
+      type:EquipmentEnums.types.OTHER,
+    },
+    BLOODWEED:{
+      name: "Bloodweed",
+      description: "Until cured, the target takes -1d4 to their damage rolls.",
+      weight:0,
+      coins:12,
+      tags:[
+        EquipmentEnums.generalTags.TOUCH,
+        EquipmentEnums.generalTags.DANGEROUS,
+      ],
+      type:EquipmentEnums.types.OTHER,
+    },
+    GOLDENROOT:{
+      name: "Goldenroot",
+      description: "The target treats the next creature they see as a trusted ally.",
+      weight:0,
+      coins:20,
+      tags:[
+        EquipmentEnums.generalTags.APPLIED,
+        EquipmentEnums.generalTags.DANGEROUS,
+      ],
+      type:EquipmentEnums.types.OTHER,
+    },
+    SERPENTS_TEARS:{
+      name: "Serpent's Tears",
+      description: "Anyone dealing damage against the target rolls twice and takes the better result.",
+      weight:0,
+      coins:10,
+      tags:[
+        EquipmentEnums.generalTags.TOUCH,
+        EquipmentEnums.generalTags.DANGEROUS,
+      ],
+      type:EquipmentEnums.types.OTHER,
+    },
+  }
 };

@@ -1,3 +1,6 @@
+//TODO only allow selecton of ranged weapons for volley, melee for hackAndSlash (ranged: true; melee: false;???) low priority
+//TODO delete ammo object from inventory if it is depleted
+
 var BasicMoves = {
   hackAndSlash: function(mover){
     var weapon = mover.getWeapon();//need to account for bonus dmg tags
@@ -32,9 +35,8 @@ var BasicMoves = {
   },
   volley: function(mover){
     var weapon = mover.getWeapon();
-    var mod = mover.abilities.dex.mod
-    var baseDmg = mover.baseDmg;
-    var dmg;
+    var ammo = mover.getAmmo(weapon);
+    var mod = mover.abilities.dex.mod;
     Game.createResult(
       Game.basicRoll(mod),
       function() {
@@ -46,25 +48,29 @@ var BasicMoves = {
           "You have to move to get the shot placing you in danger as described by the GM",
           "You have to take what you can get: -1d6 damage"
         ];
-        if (weapon.)
+        if (ammo) {
           options.push("You have to take several shots, reducing your ammo by one");
-
+        }
         var choice = Game.getChoiceIndex(options);
         if (choice === 0) {
-          dmg = Game.rollDice(1,baseDmg);
+          var dmg = Game.rollDice( 1, mover.baseDmg);
           console.log("Deal " + dmg + " damage, but now you're in danger!");
         } else if (choice === 1) {
-          dmg = Game.rollDice(1,baseDmg) - Game.rollDice(1,6);
-          dmg = dmg < 0 ? 0 : dmg
+          var dmg = Game.rollDice( 1, mover.baseDmg) - Game.rollDice(1,6);
+          dmg = dmg < 0 ? 0 : dmg;
           console.log("It's a tough shot; deal " + dmg + " damage.");
         } else {
-          dmg = Game.rollDice(1,baseDmg);
+          var dmg = Game.rollDice( 1, mover.baseDmg);
           console.log("Deal " + dmg + " damage and lose 1 ammo");
-          // TODO structure and relationship of ammo and weapons
+          ammo.ammo -= 1;
+          if (ammo.ammo === 0) {
+            mover.unequip(ammo);
+            console.log("Ammo source depleted");
+          }
         }
       },
       function() {
-        dmg = Game.rollDice(1,baseDmg);
+        var dmg = Game.rollDice( 1, mover.baseDmg);
         console.log("You have a clear shot! Deal " + dmg + " damage.");
       }
     );

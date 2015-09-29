@@ -1,3 +1,6 @@
+//TODO should initializers return values, or simply set them??? (currently inconsistent)
+//TODO in general, should function always return a value, even if its true or false???
+
 function Character() {
   this.XP = 0;
   this.level = 1;
@@ -53,7 +56,69 @@ Character.prototype = {
   assignAlignment: function() {
     return this.klass.alignment[0];
   },
+  equip: function(item){
+    if (item.hasOwnProperty(type)) {
+      if (item.type === EquipmentEnums.types.WEAPON){
+        this.equipment.weapons.push(Utilities.deepClone(item));
+      } else if (item.type === EquipmentEnums.types.AMMO) {
+        this.equipment.ammo.push(Utilities.deepClone(item));
+      } else if (item.type === EquipmentEnums.types.ARMOR) {
+        this.equipment.armor.push(Utilities.deepClone(item));
+      } else if (item.type === EquipmentEnums.types.COINS) {
+        console.log("Got " + item.amt + " coins.");
+        this.equipment.coins += item.amt;
+      } else if (item.type === EquipmentEnums.types.OTHER) {
+        this.equipment.other.push(Utilities.deepClone(item));
+      }
+    }
+  },
+  unequip: function(item) {
+    // if (item.hasOwnProperty(type)) {
+      if (item.type === EquipmentEnums.types.WEAPON){
+        var idx = this.equipment.weapons.indexOf(item);
+        if (idx > -1) {
+          this.equipment.weapons.splice(idx, 1);
+        }
+      } else if (item.type === EquipmentEnums.types.AMMO) {
+        var idx = this.equipment.ammo.indexOf(item);
+        if (idx > -1) {
+          this.equipment.ammo.splice(idx, 1);
+        }
+      } else if (item.type === EquipmentEnums.types.ARMOR) {
+        var idx = this.equipment.armor.indexOf(item);
+        if (idx > -1) {
+          this.equipment.armor.splice(idx, 1);
+        }
+      } else if (item.type === EquipmentEnums.types.OTHER) {
+        var idx = this.equipment.other.indexOf(item);
+        if (idx > -1) {
+          this.equipment.other.splice(idx, 1);
+        }
+      }
+    // }
+  },
   assignEquipment: function() {
+    var startingGear = [];
+    //get all automatic gear
+    for (i in this.klass.equipment.automatic){
+      startingGear.push(this.klass.equipment.automatic[i]);
+    }
+    //choose from groups of gear options
+    for (i in this.klass.equipment.selectable){
+      var selectable = this.klass.equipment.selectable[i];
+      console.log("Choose " + selectable.numberGranted + " " + selectable.name);
+      var optionNames = [];
+      for (var i = 0; i < selectable.options.length; i++){
+        optionNames.push(selectable.options[i].name);
+      }
+      var choice = Game.getChoiceIndex(optionNames);
+      var selection = selectable.options[choice];
+      for (i in selection.objects) {
+        console.log(selection.objects[i]);
+        startingGear.push(selection.objects[i]);
+      }
+    }
+    //sort starting gear
     var equipment = {
       weapons: [],
       ammo:[],
@@ -61,24 +126,63 @@ Character.prototype = {
       coins:0,
       other:[]
     };
-    return equipment;
+    for (i in startingGear){
+      //this.equip(startingGear[i]);???
+      if (startingGear[i].type === EquipmentEnums.types.WEAPON){
+        equipment.weapons.push(startingGear[i]);
+      } else if (startingGear[i].type === EquipmentEnums.types.AMMO) {
+        equipment.ammo.push(startingGear[i]);
+      } else if (startingGear[i].type === EquipmentEnums.types.ARMOR) {
+        equipment.armor.push(startingGear[i]);
+      } else if (startingGear[i].type === EquipmentEnums.types.COINS) {
+        console.log("amount of coins:  " + startingGear[i].amt);
+        equipment.coins += startingGear[i].amt;
+      } else if (startingGear[i].type === EquipmentEnums.types.OTHER) {
+        equipment.other.push(startingGear[i]);
+      }
+    }
+    return Utilities.deepClone(equipment);
   },
 
   getWeapon: function() {
-    var options = this.equipment.weapons;
-    options.push(
+    var options = this.equipment.weapons || [];
+    options = options.concat([
       {
         type: EquipmentEnums.types.WEAPON,
-        name: "Other",
+        name: "(Other)",
         description: "???",
         weight: 0,
-        tags: []
+        tags: [],
       }
-    );
-    var choice = Game.getChoiceIndex(options);
+    ]);
+    var weaponNames = [];
+    for (weapon in options){
+      weaponNames.push(options[weapon].name);
+    }
+    var choice = Game.getChoiceIndex(weaponNames);
     return options[choice];
   },
-  getAmmo: function(ammoType) {
-
-  }
+  getAmmo: function(weapon) {
+    // if (weapon.hasOwnProperty(ammoType)){
+      var ammoType = weapon.ammoType;
+      if (ammoType) {
+        var availableAmmo = [];
+        for (var key in this.equipment.ammo) {
+          if (this.equipment.ammo[key].ammoType === ammoType){
+            availableAmmo.push(this.equipment.ammo[key]);
+          }
+        }
+        if (availableAmmo.length > 1){
+          var ammoNames = [];
+          for (var i = 0; i < availableAmmo.length; i++) {
+            ammoNames.push(availableAmmo[i].name + ", amt: " + availableAmmo[i].ammo);
+          }
+          var choice = Game.getChoiceIndex(ammoNames);
+          return availableAmmo[choice];
+        } else if (availableAmmo.length === 1) {
+          return availableAmmo[0];
+        }
+      }
+    // }
+  },
 }
