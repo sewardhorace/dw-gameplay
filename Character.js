@@ -14,7 +14,14 @@ function Character() {
   this.maxLoad = this.calculateMaxLoad();
   this.bonds = this.assignBonds();
   this.alignment = this.assignAlignment();
-  this.equipment = this.assignEquipment();
+  this.equipment = {
+    weapons:[],
+    ammo:[],
+    armor:[],
+    coins:0,
+    other:[],
+  };
+  this.assignEquipment();
   this.spells = [];
   this.klassMoves = [];
   // this.companions = []; //hirelings, animal companions, familiars, etc.??
@@ -57,7 +64,7 @@ Character.prototype = {
     return this.klass.alignment[0];
   },
   equip: function(item){
-    if (item.hasOwnProperty(type)) {
+    if (item.type) {
       if (item.type === EquipmentEnums.types.WEAPON){
         this.equipment.weapons.push(Utilities.deepClone(item));
       } else if (item.type === EquipmentEnums.types.AMMO) {
@@ -73,7 +80,7 @@ Character.prototype = {
     }
   },
   unequip: function(item) {
-    // if (item.hasOwnProperty(type)) {
+    if (item.type) {
       if (item.type === EquipmentEnums.types.WEAPON){
         var idx = this.equipment.weapons.indexOf(item);
         if (idx > -1) {
@@ -95,7 +102,7 @@ Character.prototype = {
           this.equipment.other.splice(idx, 1);
         }
       }
-    // }
+    }
   },
   assignEquipment: function() {
     var startingGear = [];
@@ -118,30 +125,10 @@ Character.prototype = {
         startingGear.push(selection.objects[i]);
       }
     }
-    //sort starting gear
-    var equipment = {
-      weapons: [],
-      ammo:[],
-      armor:[],
-      coins:0,
-      other:[]
-    };
+    //equip
     for (i in startingGear){
-      //this.equip(startingGear[i]);???
-      if (startingGear[i].type === EquipmentEnums.types.WEAPON){
-        equipment.weapons.push(startingGear[i]);
-      } else if (startingGear[i].type === EquipmentEnums.types.AMMO) {
-        equipment.ammo.push(startingGear[i]);
-      } else if (startingGear[i].type === EquipmentEnums.types.ARMOR) {
-        equipment.armor.push(startingGear[i]);
-      } else if (startingGear[i].type === EquipmentEnums.types.COINS) {
-        console.log("amount of coins:  " + startingGear[i].amt);
-        equipment.coins += startingGear[i].amt;
-      } else if (startingGear[i].type === EquipmentEnums.types.OTHER) {
-        equipment.other.push(startingGear[i]);
-      }
+      this.equip(startingGear[i]);
     }
-    return Utilities.deepClone(equipment);
   },
 
   getWeapon: function() {
@@ -163,7 +150,7 @@ Character.prototype = {
     return options[choice];
   },
   getAmmo: function(weapon) {
-    // if (weapon.hasOwnProperty(ammoType)){
+    if (weapon.ammoType){
       var ammoType = weapon.ammoType;
       if (ammoType) {
         var availableAmmo = [];
@@ -183,6 +170,6 @@ Character.prototype = {
           return availableAmmo[0];
         }
       }
-    // }
+    }
   },
 }

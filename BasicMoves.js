@@ -93,4 +93,43 @@ var BasicMoves = {
       }
     );
   },
+  defend: function(mover){
+    var mod = mover.abilities.con.mod
+    Game.createResult(
+      Game.basicRoll(mod),
+      function(){
+        mover.XP += 1;
+        console.log("XP: " + mover.XP);
+      },
+      function(){
+        mover.hold.defend = 1;
+        console.log("Hold 1");
+      },
+      function(){
+        mover.hold.defend = 3;
+        console.log("Hold 3");
+      }
+    );
+  },
+  defendHold: function(mover){
+    var hold = mover.hold.defend;
+    if (hold > 0){
+      var options = [
+        "Redirect an attack from the thing you defend to yourself",
+        "Halve the attack’s effect or damage",
+        "Open up the attacker to an ally giving that ally +1 forward against the attacker",
+        "Deal damage to the attacker equal to your level",
+      ];
+      var choice = Game.getChoiceIndex(options);
+      if (choice === 0){
+        console.log("Attack redirected");
+      } else if (choice === 1){
+        console.log("Half damage");
+      } else if (choice === 2){
+        console.log("Give an ally +1 fwd");
+      } else {
+        console.log("Deal "+mover.level+" dmg");
+      }
+    }
+  },
 }
