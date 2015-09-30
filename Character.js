@@ -4,16 +4,16 @@
 function Character() {
   this.XP = 0;
   this.level = 1;
-  this.abilities = this.assignAbilities();
-  this.klass = this.assignClass();
-  this.name = this.assignName();
-  this.look = this.assignLook();
-  this.race = this.assignRace();
+  this.abilities = this.autoAssignAbilities();
+  this.klass = this.autoAssignClass();
+  this.name = this.autoAssignName();
+  this.look = this.autoAssignLook();
+  this.race = this.autoAssignRace();
   this.maxHP = this.calculateMaxHP();
   this.HP = this.maxHP;
   this.maxLoad = this.calculateMaxLoad();
-  this.bonds = this.assignBonds();
-  this.alignment = this.assignAlignment();
+  this.bonds = this.autoAssignBonds();
+  this.alignment = this.autoAssignAlignment();
   this.equipment = {
     weapons:[],
     ammo:[],
@@ -21,7 +21,8 @@ function Character() {
     coins:0,
     other:[],
   };
-  this.assignEquipment();
+  this.autoAssignEquipment();
+  // this.assignEquipment();
   this.spells = [];
   this.klassMoves = [];
   // this.companions = []; //hirelings, animal companions, familiars, etc.??
@@ -31,16 +32,16 @@ function Character() {
 }
 Character.prototype = {
 
-  assignAbilities: function() {
+  autoAssignAbilities: function() {
     return Abilities.getRandomAbilities();
   },
-  assignClass: function() {
-    return Bard;
+  autoAssignClass: function() {
+    return Utilities.deepClone(Bard);
   },
-  assignName: function() {
+  autoAssignName: function() {
     return this.klass.names[0].options[0];
   },
-  assignLook: function() {
+  autoAssignLook: function() {
     var lookOptions = this.klass.look;
     var look = [];
     for (i in lookOptions) {
@@ -48,7 +49,7 @@ Character.prototype = {
     };
     return look;
   },
-  assignRace: function() {
+  autoAssignRace: function() {
     return this.klass.races[0];
   },
   calculateMaxHP: function() {
@@ -57,10 +58,10 @@ Character.prototype = {
   calculateMaxLoad: function() {
     return this.klass.baseLoad + this.abilities.str.mod
   },
-  assignBonds: function() {
+  autoAssignBonds: function() {
     return this.klass.bonds;
   },
-  assignAlignment: function() {
+  autoAassignAlignment: function() {
     return this.klass.alignment[0];
   },
   equip: function(item){
@@ -122,6 +123,25 @@ Character.prototype = {
       var selection = selectable.options[choice];
       for (i in selection.objects) {
         console.log(selection.objects[i]);
+        startingGear.push(selection.objects[i]);
+      }
+    }
+    //equip
+    for (i in startingGear){
+      this.equip(startingGear[i]);
+    }
+  },
+  autoAssignEquipment: function() {
+    var startingGear = [];
+    //get all automatic gear
+    for (i in this.klass.equipment.automatic){
+      startingGear.push(this.klass.equipment.automatic[i]);
+    }
+    //choose first choice of all gear options
+    for (i in this.klass.equipment.selectable){
+      var selectable = this.klass.equipment.selectable[i];
+      var selection = selectable.options[0];
+      for (i in selection.objects) {
         startingGear.push(selection.objects[i]);
       }
     }
