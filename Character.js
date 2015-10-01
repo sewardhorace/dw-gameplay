@@ -61,7 +61,7 @@ Character.prototype = {
   autoAssignBonds: function() {
     return this.klass.bonds;
   },
-  autoAassignAlignment: function() {
+  autoAssignAlignment: function() {
     return this.klass.alignment[0];
   },
   equip: function(item){
@@ -140,7 +140,7 @@ Character.prototype = {
     //choose first choice of all gear options
     for (i in this.klass.equipment.selectable){
       var selectable = this.klass.equipment.selectable[i];
-      var selection = selectable.options[0];
+      var selection = selectable.options[1];
       for (i in selection.objects) {
         startingGear.push(selection.objects[i]);
       }
