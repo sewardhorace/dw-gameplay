@@ -12,7 +12,7 @@ function Character() {
   this.maxHP = this.calculateMaxHP();
   this.HP = this.maxHP;
   this.maxLoad = this.calculateMaxLoad();
-  this.bonds = this.autoAssignBonds();
+  this.bonds = this.autoAssignBonds(); // needs to include active bonds' text and target, as well as tally of finished bonds' targets (by character name? id?)
   this.alignment = this.autoAssignAlignment();
   this.equipment = {
     weapons:[],
@@ -27,8 +27,8 @@ function Character() {
   this.klassMoves = [];
   // this.companions = []; //hirelings, animal companions, familiars, etc.??
   //for temp stats:
-  this.hold = {};
-  this.forward = {};
+  this.hold = {}; //ex. hold.defend = 3
+  this.forward = {}; //should specify source (i.e., forward.aid = 1)
 }
 Character.prototype = {
 

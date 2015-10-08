@@ -1,4 +1,5 @@
 var Bard = {
+  name:"Bard",
   names: [
     {
       name: "Elf",
